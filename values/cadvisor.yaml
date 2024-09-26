@@ -1,0 +1,67 @@
+container:
+  port: 8080
+  additionalArgs:
+    - --housekeeping_interval=10s                       # kubernetes default args
+    - --max_housekeeping_interval=15s
+    - --event_storage_event_limit=default=0
+    - --event_storage_age_limit=default=0
+    - --disable_metrics=percpu,process,sched,tcp,udp    # enable only diskIO, cpu, memory, network, disk
+    - --docker_only
+  hostPaths:
+    - name: rootfs
+      path: "/"
+      mount: "/rootfs"
+      readOnly: true
+    - name: varrun
+      path: "/var/run"
+      readOnly: true
+    - name: sys
+      path: "/sys"
+      readOnly: true
+    - name: docker
+      path: "/var/lib/docker"
+      readOnly: true
+    - name: disk
+      path: "/dev/disk"
+      readOnly: true
+
+
+daemonsetAnnotations:
+  seccomp.security.alpha.kubernetes.io/pod: 'docker/default'
+
+# priorityClassName: system-cluster-critical
+priorityClassName: {}
+
+# sometimes errors are encountered when using the cpu load reader without being on the host network
+hostNetwork: false
+
+
+podSecurityPolicy:
+  create: false
+  privileged: false
+
+# This will create a ServiceMonitor Custom Resource indicating the prometheus operator what to scrape.
+metrics:
+  enabled: true
+  interval: 30s
+  scrapeTimeout: 30s
+  # This will allow you to specify relabelings on the metrics before ingestion. E.g. to use the kubernetes monitoring
+  # mixin with this chart set metrics.enabled above to true and use:
+  # relabelings:
+  #  - sourceLabels:
+  #    - name
+  #    targetLabel: container
+  #  - sourceLabels:
+  #    - container_label_io_kubernetes_pod_namespace
+  #    targetLabel: namespace
+  #  - sourceLabels:
+  #    - container_label_io_kubernetes_pod_name
+  #    targetLabel: pod
+  # metricRelabelings: []
+  # # This will allow you to specify relabelings on the metrics before scraping.
+  # # relabelings:
+  # #  - action: replace
+  # #    sourceLabels:
+  # #    - __meta_kubernetes_pod_node_name
+  # #    targetLabel: node
+  # relabelings: []

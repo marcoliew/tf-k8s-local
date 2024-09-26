@@ -1,0 +1,37 @@
+---
+controller:
+  # ingressClassResource:
+  #   enabled: true
+  # ingressClass: external-nginx
+  admissionWebhooks:
+    enabled: true
+  config:
+    compute-full-forwarded-for: "true"
+    use-forwarded-header: "true"
+    proxy-body-size: "0"
+  service:
+    annotations:
+      # service.beta.kubernetes.io/aws-load-balancer-type: external
+      # service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+      # service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      additionalLabels:
+        prometheus: selected
+      # annotations: {}
+      # ## The label to use to retrieve the job name from.
+      # ## jobLabel: "app.kubernetes.io/name"
+      # namespace: ""
+      # namespaceSelector: {}
+      # ## Default: scrape .Release.Namespace or namespaceOverride only
+      # ## To scrape all, use the following:
+      # ## namespaceSelector:
+      # ##   any: true
+      # scrapeInterval: 30s
+      # # honorLabels: true
+      # targetLabels: []
+      # relabelings: []
+      # metricRelabelings: []
+#replicaCount: 2

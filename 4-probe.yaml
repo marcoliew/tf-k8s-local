@@ -1,0 +1,19 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: probe-web
+  namespace: monitoring
+  labels:
+    prometheus: selected
+spec:
+  jobName: probe-web
+  interval: 15s
+  module: http_2xx
+  prober:
+    url: blackbox-exporter.monitoring:9115
+  targets:
+    staticConfig:
+      static:
+        - https://www.google.com
+        - https://xeniumsolution.online
